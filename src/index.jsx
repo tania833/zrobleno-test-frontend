@@ -3,8 +3,14 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-
-
+import { makeStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography'; 
 
 class MyComponent extends Component {
   constructor(props) {
@@ -46,8 +52,26 @@ class MyComponent extends Component {
         <ul>
           {items.map(item => (
             <li>
-              {item.title} {item.price}
-              <img src={item.img}></img>
+            <Card>
+            <CardActionArea>
+              <CardMedia
+                component="img"
+                alt="imgItem"
+                max-height="150px"
+                max-width="150px"
+                image={item.img}
+                title="imgItem"
+              />
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="h2">
+                {item.title}
+                </Typography>
+                <Typography variant="body2" color="textSecondary" component="p">
+                {item.price} грн
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+          </Card>
             </li>
           ))}
         </ul>
