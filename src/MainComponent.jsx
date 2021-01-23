@@ -44,7 +44,7 @@ import Typography from '@material-ui/core/Typography';
       return (
         <ul>
           {items.map(item => (
-            <li>
+            <li key={item.price}>
             <Card>
             <CardActionArea>
               <CardMedia
