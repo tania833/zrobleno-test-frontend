@@ -19,7 +19,6 @@ const MainComponent = () => {
 
   const goods = useSelector((store) => store.main.goods);
 
-
   const sortedGoods = goods.items?.slice().sort(function(a, b) {
     return a.price - b.price;
   });
