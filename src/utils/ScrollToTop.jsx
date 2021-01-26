@@ -24,11 +24,13 @@ const useStyles = makeStyles((theme) =>
         width: '50px',
         height: '50px',
       },
+      background: '#f50057'
+
     },
     icon: {
       width: '3rem',
       height: '3rem',
-      color: 'rgba(0, 0, 0, 0.53)',
+      color: 'white',
     },
   })
 );

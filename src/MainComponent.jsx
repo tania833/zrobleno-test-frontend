@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import * as _ from 'lodash';
 import { animateScroll as scroll } from 'react-scroll';
 import { fetchGoods } from './store/mainReducer.';
 import { useSelector, useDispatch } from 'react-redux';
@@ -7,6 +8,7 @@ import styles from './styles/MainComponent.module.scss';
 import Button from '@material-ui/core/Button';
 import { SearchField } from './utils/SearchField';
 import { Spinner } from './utils/Spinner';
+import RangeInput from './utils/RangeInput';
 
 const MainComponent = () => {
   const [size, setSize] = useState(3);
@@ -17,24 +19,40 @@ const MainComponent = () => {
     dispatch(fetchGoods());
   }, []);
 
-  const goods = useSelector((store) => store.main.goods);
+  const goods = useSelector((store) => store?.main?.goods);
 
-  const sortedGoods = goods.items?.slice().sort(function(a, b) {
-    return a.price - b.price;
-  });
+  const goodsToRender = goods?.items
+    ?.slice()
+    .sort(function (a, b) {
+      return a.price - b.price;
+    })
+    .sort(function (a, b) {
+      return a.weight - b.weight;
+    });
 
-  const cardsToRender = sortedGoods?.map((card) => {
+  let cardsToRender = goodsToRender?.slice(0, size).map((card) => {
     return <ProductCard cardInfo={card} key={Math.random()} />;
   });
 
-  const cards = cardsToRender?.slice(0, size);
   const changeSize = () => {
     setSize((size) => (size += 3));
     scroll.scrollToBottom();
   };
 
+  const setWeightFilt = (value) => {
+    setSize(3);
+    handler(value);
+  };
+  const handler = useCallback(
+    _.debounce(
+      (value) =>  dispatch(fetchGoods(value)),
+      500,
+    ),
+    [],
+  );
+
   const showMore =
-    cards?.length < cardsToRender?.length ? (
+    cardsToRender?.length < goodsToRender?.length ? (
       <Button
         variant="contained"
         color="secondary"
@@ -48,9 +66,9 @@ const MainComponent = () => {
     );
 
   const showSpinnerOrCount =
-    cards?.length > 0 ? (
+    cardsToRender?.length > 0 ? (
       <p className={styles.textCardsRendered}>
-        Показано {cards?.length} з {cardsToRender?.length}{' '}
+        Показано {cardsToRender?.length} з {goodsToRender?.length}{' '}
       </p>
     ) : (
       <Spinner />
@@ -59,7 +77,13 @@ const MainComponent = () => {
   return (
     <div className={styles.generalContainer}>
       <SearchField />
-      <div className={styles.cardsContainer}>{cards}</div>
+      <div className={styles.filters}>
+        <div className={styles.weightFilters}>
+          <h3 className={styles.filtersPara}>Вага</h3>
+          <RangeInput setFilters={setWeightFilt} />
+        </div>
+      </div>
+      <div className={styles.cardsContainer}>{cardsToRender}</div>
       {showMore}
       {showSpinnerOrCount}
     </div>
