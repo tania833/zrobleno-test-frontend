@@ -1,0 +1,59 @@
+.topbar__input {
+    box-sizing: border-box;
+    border: 0.0625rem solid #e7dfdf;
+    border-radius: 0.1875rem 0rem 0rem 0.1875rem;
+    width: 23.75rem;
+    padding: 0.625rem;
+    height: 2.5rem;
+  }
+  
+  .topbar__input::placeholder {
+    font-family: "Montserrat";
+    font-weight: 300;
+    font-size: 1rem;
+    color: #747171;
+  }
+  
+  .topbar__submit {
+    width: 3.75rem;
+    height: 2.5rem;
+    background: url("./icon/search.svg") center no-repeat #f50057;
+    border: none;
+    border-radius: 0.1875rem;
+  
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  
+  .topbar__form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  @media all and (max-width: 992px) {
+    .topbar__input {
+      width: 24rem;
+      padding: 0.8rem;
+    }
+  
+}
+  
+  @media all and (max-width: 768px) {
+    .topbar__input::placeholder {
+      font-size: 1.2rem;
+    }
+  }
+  
+  @media all and (max-width: 576px) {
+    .topbar__input {
+      padding: 1.1rem;
+      width: 100%;
+      height: 3rem;
+    }
+  
+    .topbar__submit {
+      height: 3rem;
+    }
+  }
