@@ -1,76 +1,70 @@
-import React, { Component } from 'react';
-import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Typography from '@material-ui/core/Typography'; 
+import React, { useEffect, useState } from 'react';
+import { animateScroll as scroll } from 'react-scroll';
+import { fetchGoods } from './store/mainReducer.';
+import { useSelector, useDispatch } from 'react-redux';
+import { ProductCard } from './utils/ProductCard';
+import styles from './styles/MainComponent.module.scss';
+import Button from '@material-ui/core/Button';
+import { SearchField } from './utils/SearchField';
+import { Spinner } from './utils/Spinner';
 
- class MainComponent extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      error: null,
-      isLoaded: false,
-      items: []
-    };
-  }
+const MainComponent = () => {
+  const [size, setSize] = useState(3);
 
-  componentDidMount() {
-    fetch("http://localhost:3000/api/goods")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          this.setState({
-            isLoaded: true,
-            items: result.result
-          });
-        },
-        (error) => {
-          this.setState({
-            isLoaded: true,
-            error
-          });
-        }
-      )
-  }
+  const dispatch = useDispatch();
 
-  render() {
-    const { error, isLoaded, items } = this.state;
-    if (error) {
-      return <div>Ошибка: {error.message}</div>;
-    } else if (!isLoaded) {
-      return <div>Загрузка...</div>;
-    } else {
-      return (
-        <ul>
-          {items.map(item => (
-            <li key={item.price}>
-            <Card>
-            <CardActionArea>
-              <CardMedia
-                component="img"
-                alt="imgItem"
-                max-height="150px"
-                max-width="150px"
-                image={item.img}
-                title="imgItem"
-              />
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="h2">
-                {item.title}
-                </Typography>
-                <Typography variant="body2" color="textSecondary" component="p">
-                {item.price} грн
-                </Typography>
-              </CardContent>
-            </CardActionArea>
-          </Card>
-            </li>
-          ))}
-        </ul>
-      );
-    }
-  }
-}
+  useEffect(() => {
+    dispatch(fetchGoods());
+  }, []);
 
-export default MainComponent
+  const goods = useSelector((store) => store.main.goods);
+
+
+  const sortedGoods = goods.items?.slice().sort(function(a, b) {
+    return a.price - b.price;
+  });
+
+  const cardsToRender = sortedGoods?.map((card) => {
+    return <ProductCard cardInfo={card} key={Math.random()} />;
+  });
+
+  const cards = cardsToRender?.slice(0, size);
+  const changeSize = () => {
+    setSize((size) => (size += 3));
+    scroll.scrollToBottom();
+  };
+
+  const showMore =
+    cards?.length < cardsToRender?.length ? (
+      <Button
+        variant="contained"
+        color="secondary"
+        size="large"
+        onClick={changeSize}
+      >
+        Показати ще
+      </Button>
+    ) : (
+      ''
+    );
+
+  const showSpinnerOrCount =
+    cards?.length > 0 ? (
+      <p className={styles.textCardsRendered}>
+        Показано {cards?.length} з {cardsToRender?.length}{' '}
+      </p>
+    ) : (
+      <Spinner />
+    );
+
+  return (
+    <div className={styles.generalContainer}>
+      <SearchField />
+      <div className={styles.cardsContainer}>{cards}</div>
+      {showMore}
+      {showSpinnerOrCount}
+    </div>
+  );
+};
+
+export default MainComponent;
